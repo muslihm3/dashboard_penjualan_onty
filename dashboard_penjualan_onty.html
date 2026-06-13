@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Analisis Penjualan Onty Bakery — 2026</title>
+<style>
+:root{
+  --cream:#FBF6EC;
+  --paper:#FFFFFF;
+  --ink:#3A2A1D;
+  --ink-soft:#7A6A5A;
+  --line:#E8DECE;
+  --amber:#BA7517;
+  --amber-soft:#FAEEDA;
+  --blue:#1D5C8A;
+  --blue-soft:#E2EEF5;
+  --green:#3B6D11;
+  --green-soft:#EAF3DE;
+  --red:#A32D2D;
+  --red-soft:#FAE3E1;
+  --gold:#D9A441;
+  --snack:#7A9E3E;
+  --cake:#C0608A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Lato',-apple-system,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.5;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px;}
+
+/* Header */
+.masthead{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  border-bottom:3px solid var(--ink);
+  padding-bottom:18px;margin-bottom:24px;flex-wrap:wrap;gap:12px;
+}
+.masthead h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:32px;font-weight:900;letter-spacing:-0.5px;
+}
+.masthead .meta{text-align:right;font-size:12px;color:var(--ink-soft);}
+.eyebrow{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);
+  font-weight:700;margin-bottom:4px;
+}
+
+/* Outlet toggle */
+.outlet-tabs{display:flex;gap:6px;margin-bottom:24px;}
+.otab{
+  flex:1;padding:14px 18px;border:2px solid var(--ink);background:var(--paper);
+  font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:700;
+  cursor:pointer;text-align:left;border-radius:4px;transition:all .15s;color:var(--ink-soft);
+}
+.otab .sub{font-family:'Lato',sans-serif;font-size:12px;font-weight:400;color:var(--ink-soft);margin-top:2px;}
+.otab.on{background:var(--ink);color:var(--cream);}
+.otab.on .sub{color:#cfc3b3;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px;}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;}
+.kpi-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);margin-bottom:8px;}
+.kpi-val{font-family:'Playfair Display',Georgia,serif;font-size:26px;font-weight:900;line-height:1.1;}
+.kpi-sub{font-size:11px;margin-top:6px;font-weight:700;}
+.up{color:var(--green);}.down{color:var(--red);}.warn{color:var(--amber);}
+
+/* Section nav */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--line);}
+.tab{
+  padding:10px 18px;border:none;background:none;font-size:13px;font-weight:700;
+  color:var(--ink-soft);cursor:pointer;border-bottom:3px solid transparent;letter-spacing:0.3px;
+}
+.tab.on{color:var(--ink);border-bottom-color:var(--amber);}
+.panel{display:none;}
+.panel.on{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* Cards */
+.row2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px;}
+.card-t{font-size:14px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:'Playfair Display',Georgia,serif;}
+.card-sub{font-size:11px;color:var(--ink-soft);margin-top:-8px;margin-bottom:14px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px;font-size:11px;color:var(--ink-soft);}
+.legend span{display:flex;align-items:center;gap:5px;}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.line-dot{width:14px;height:2px;display:inline-block;}
+
+/* Tables */
+table{width:100%;font-size:12.5px;border-collapse:collapse;}
+th{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink-soft);text-align:right;padding:8px 8px;border-bottom:2px solid var(--ink);font-weight:700;}
+th:first-child,td:first-child{text-align:left;}
+td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:right;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--cream);}
+
+/* Product rows */
+.prod-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+.prod-row:last-child{border:none;}
+.prod-name{font-size:12.5px;min-width:140px;flex-shrink:0;font-weight:600;}
+.prod-bar-bg{flex:1;height:7px;background:var(--cream);border-radius:4px;overflow:hidden;}
+.prod-bar{height:100%;border-radius:4px;}
+.prod-val{font-size:12px;font-weight:700;min-width:48px;text-align:right;}
+.prod-sub{font-size:10.5px;color:var(--ink-soft);min-width:70px;text-align:right;}
+
+/* Insights */
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px;}
+.ins{background:var(--paper);border:1px solid var(--line);border-left:5px solid;border-radius:6px;padding:14px 16px;}
+.ins.r{border-left-color:var(--red);}.ins.y{border-left-color:var(--amber);}
+.ins.g{border-left-color:var(--green);}.ins.b{border-left-color:var(--blue);}
+.ins-t{font-size:13px;font-weight:900;margin-bottom:5px;}
+.ins-x{font-size:12px;color:var(--ink-soft);line-height:1.6;}
+
+/* Action plan */
+.plan{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px;margin-bottom:16px;}
+.plan h3{font-family:'Playfair Display',Georgia,serif;font-size:16px;margin-bottom:10px;}
+.plan ol{margin-left:20px;font-size:13px;color:var(--ink);}
+.plan li{margin-bottom:8px;line-height:1.6;}
+.plan li b{color:var(--ink);}
+
+/* badges */
+.badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.badge-g{background:var(--green-soft);color:var(--green);}
+.badge-r{background:var(--red-soft);color:var(--red);}
+
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-soft);text-align:center;}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .row2,.row3{grid-template-columns:1fr;}
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <div class="eyebrow">Business Intelligence Report</div>
+      <h1>Onty Bakery — Dashboard Penjualan 2026</h1>
+    </div>
+    <div class="meta">
+      Sumber: Analisis Penjualan Toko 2026, Data Roti Diskon 2026,<br>
+      Analisa Pendapatan per Quartal 2026 (Google Drive)<br>
+      <span class="badge badge-g" style="margin-top:4px;display:inline-block;">Data Real — Jan–Mei 2026</span>
+    </div>
+  </div>
+
+  <div class="outlet-tabs" id="outletTabs">
+    <button class="otab on" data-o="o1">Outlet 1 — Onty 1<div class="sub">Cabang utama, fokus roti & sisir</div></button>
+    <button class="otab" data-o="o2">Outlet 2 — Onty 2<div class="sub">Cabang dengan growth tertinggi</div></button>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="tabs" id="tabBar">
+    <button class="tab on" data-t="trend">Tren Pendapatan</button>
+    <button class="tab" data-t="monthly">Performa Bulanan</button>
+    <button class="tab" data-t="mix">Komposisi Revenue</button>
+    <button class="tab" data-t="produk">Produk &amp; Diskon</button>
+    <button class="tab" data-t="insight">Insight &amp; Rencana Aksi</button>
+  </div>
+
+  <!-- TREND -->
+  <div id="trend" class="panel on">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-t">Tren Pendapatan Harian — April &amp; Mei 2026</div>
+      <div class="card-sub">Pendapatan toko aktual dibandingkan target harian</div>
+      <div class="legend">
+        <span><span class="dot" id="legDotTrend"></span>Pendapatan Aktual</span>
+        <span><span class="line-dot" style="background:#9fc3df;border-top:2px dashed #5a8fb5;height:0;"></span>Target Harian</span>
+      </div>
+      <div style="position:relative;height:280px;"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="row2">
+      <div class="card">
+        <div class="card-t">Rata-rata Pendapatan per Hari (Senin–Minggu)</div>
+        <div class="card-sub">Akhir pekan ditandai warna amber</div>
+        <div style="position:relative;height:220px;"><canvas id="weekdayChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Hari Terbaik &amp; Terlemah</div>
+        <div id="extremeDays" style="font-size:13px;line-height:2;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div id="monthly" class="panel">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-t">Pendapatan Toko: Aktual vs Target — Januari–Mei 2026</div>
+      <div style="position:relative;height:260px;"><canvas id="monthlyChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Tabel Performa Bulanan</div>
+      <div class="card-sub">Aktual 2025 vs Target 2026 vs Aktual 2026, beserta capaian dan growth YoY</div>
+      <table>
+        <thead><tr><th>Bulan</th><th>Aktual 2025</th><th>Target 2026</th><th>Aktual 2026</th><th>Pencapaian</th><th>Growth YoY</th></tr></thead>
+        <tbody id="monthlyTbl"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MIX -->
+  <div id="mix" class="panel">
+    <div class="row2" style="grid-template-columns:1fr 1.2fr;">
+      <div class="card">
+        <div class="card-t">Komposisi Revenue Q1 2026</div>
+        <div class="card-sub">Toko (roti harian) vs Snack Box vs Cake (pesanan)</div>
+        <div style="position:relative;height:230px;"><canvas id="mixChart"></canvas></div>
+        <div class="legend" id="mixLegend" style="margin-top:10px;justify-content:center;"></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Growth YoY per Kategori — Q1 2025 vs 2026</div>
+        <div class="card-sub">Snack Box adalah pendorong pertumbuhan terbesar</div>
+        <div style="position:relative;height:260px;"><canvas id="growthCatChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">Tren Bulanan per Kategori — Januari, Februari, Maret 2026</div>
+      <div style="position:relative;height:260px;"><canvas id="catMonthlyChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PRODUK -->
+  <div id="produk" class="panel">
+    <div class="row2">
+      <div class="card">
+        <div class="card-t">Top 8 Produk Berdasarkan Volume Produksi</div>
+        <div class="card-sub">Akumulasi April + Mei 2026 (pcs)</div>
+        <div id="topVol"></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Ringkasan Diskon / Sisa Produksi</div>
+        <div id="discSummary" style="font-size:13px;color:var(--ink-soft);line-height:1.9;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">Top 8 Produk dengan Tingkat Diskon Tertinggi</div>
+      <div class="card-sub">Akumulasi April + Mei 2026, minimal 20 pcs produksi</div>
+      <div id="topWaste"></div>
+    </div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div id="insight" class="panel">
+    <div class="ins-grid" id="insightGrid"></div>
+    <div class="plan" id="planBox"></div>
+  </div>
+
+  <footer>
+    Dashboard dibuat otomatis berdasarkan data Google Drive Onty Bakery — Januari hingga Mei 2026.<br>
+    Data Snack Box &amp; Cake hanya tersedia untuk Q1 2026 (Jan-Mar). Data Juni 2026 belum terisi pada sumber.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DATA = {
+o1: {
+  color:'#BA7517', colorSoft:'#FAEEDA',
+  daily: [{"date":"04-01","rev":12768050.0,"target":12333923},{"date":"04-02","rev":10257800.0,"target":12333923},{"date":"04-03","rev":16522250.0,"target":12333923},{"date":"04-04","rev":14730050.0,"target":12333923},{"date":"04-05","rev":12748900.0,"target":12333923},{"date":"04-06","rev":10227550.0,"target":12333923},{"date":"04-07","rev":12198200.0,"target":12333923},{"date":"04-08","rev":11373750.0,"target":12333923},{"date":"04-09","rev":11103500.0,"target":12333923},{"date":"04-10","rev":9534600.0,"target":12333923},{"date":"04-11","rev":12837700.0,"target":12333923},{"date":"04-12","rev":10465900.0,"target":12333923},{"date":"04-16","rev":10715500.0,"target":12333923},{"date":"04-17","rev":13033250.0,"target":12333923},{"date":"04-18","rev":13878700.0,"target":12333923},{"date":"04-19","rev":16761100.0,"target":12333923},{"date":"04-20","rev":15271450.0,"target":12333923},{"date":"04-21","rev":13041300.0,"target":12333923},{"date":"04-22","rev":12897400.0,"target":12333923},{"date":"04-23","rev":13012812.0,"target":12333923},{"date":"04-24","rev":14024450.0,"target":12333923},{"date":"04-25","rev":12876350.0,"target":12333923},{"date":"04-26","rev":15870750.0,"target":12333923},{"date":"04-27","rev":12142200.0,"target":12333923},{"date":"04-28","rev":10526300.0,"target":12333923},{"date":"04-29","rev":13119900.0,"target":12333923},{"date":"04-30","rev":14226650.0,"target":12333923},{"date":"05-01","rev":17364450.0,"target":12972352},{"date":"05-02","rev":14895650.0,"target":12972352},{"date":"05-03","rev":11909250.0,"target":12972352},{"date":"05-04","rev":11882600.0,"target":12972352},{"date":"05-05","rev":12483250.0,"target":12972352},{"date":"05-06","rev":12246700.0,"target":12972352},{"date":"05-07","rev":13577900.0,"target":12972352},{"date":"05-08","rev":13327600.0,"target":12972352},{"date":"05-09","rev":13233900.0,"target":12972352},{"date":"05-10","rev":14448750.0,"target":12972352},{"date":"05-11","rev":10408900.0,"target":12972352},{"date":"05-12","rev":7681225.0,"target":12972352},{"date":"05-13","rev":13177200.0,"target":12972352},{"date":"05-14","rev":11479450.0,"target":12972352},{"date":"05-15","rev":11572950.0,"target":12972352},{"date":"05-16","rev":13570800.0,"target":12972352},{"date":"05-17","rev":15096400.0,"target":12972352},{"date":"05-18","rev":8786700.0,"target":12972352},{"date":"05-19","rev":13363250.0,"target":12972352},{"date":"05-20","rev":11761750.0,"target":12972352},{"date":"05-21","rev":13727150.0,"target":12972352},{"date":"05-22","rev":11569000.0,"target":12972352},{"date":"05-23","rev":15654650.0,"target":12972352},{"date":"05-24","rev":12711000.0,"target":12972352},{"date":"05-25","rev":12129925.0,"target":12972352},{"date":"05-26","rev":13569450.0,"target":12972352},{"date":"05-29","rev":15148250.0,"target":12972352},{"date":"05-30","rev":15965317.0,"target":12972352},{"date":"05-31","rev":14471750.0,"target":12972352}],
+  top_vol: [{"name":"DONAT MISES","prod":1416.0,"disc":78.0,"pct":5.51},{"name":"SISIR MENTEGA","prod":1210.0,"disc":53.0,"pct":4.38},{"name":"TAWAR ORI","prod":1157.0,"disc":56.0,"pct":4.84},{"name":"SISIR ORI","prod":1121.0,"disc":60.0,"pct":5.35},{"name":"SISIR MOCCA","prod":1089.0,"disc":43.0,"pct":3.95},{"name":"PISANG COKLAT","prod":806.0,"disc":6.0,"pct":0.74},{"name":"PIZZA MINI","prod":732.0,"disc":13.0,"pct":1.78},{"name":"COKLAT","prod":684.0,"disc":32.0,"pct":4.68}],
+  top_waste: [{"name":"SOBEK KOMBINASI","prod":131.0,"disc":43.0,"pct":32.82},{"name":"BLUEBERRY TOAST","prod":124.0,"disc":31.0,"pct":25.0},{"name":"SOBEK COKLAT KEJU","prod":158.0,"disc":37.0,"pct":23.42},{"name":"TAWAR KEJU","prod":88.0,"disc":20.0,"pct":22.73},{"name":"DONAT KACANG","prod":67.0,"disc":15.0,"pct":22.39},{"name":"GARLIC CHEESE","prod":197.0,"disc":35.0,"pct":17.77},{"name":"WOLLROLL COKAT","prod":274.0,"disc":45.0,"pct":16.42},{"name":"WOLLROLL KEJU","prod":135.0,"disc":22.0,"pct":16.3}],
+  total_prod: 26190, total_disc: 1751, n_products: 73,
+  monthly: [
+   {m:'Jan', a25:295232155, t26:369040193.8, a26:353151375, ach:0.9569455604, gr:0.1961819504},
+   {m:'Feb', a25:279267450, t26:349084312.5, a26:291471800, ach:0.8349610382, gr:0.04370129781},
+   {m:'Mar', a25:342913100, t26:428641375, a26:461525605, ach:1.076717349, gr:0.3458966864},
+   {m:'Apr', a25:296014150, t26:370017687.5, a26:346166362, ach:0.9355400396, gr:0.1694250494},
+   {m:'May', a25:321714325, t26:402142906.3, a26:377215167, ach:0.9380127341, gr:0.1725159177},
+  ],
+  cat: {
+    toko:   {q1_25:917412705,   q1_26:1106148780},
+    snack:  {q1_25:372340438,   q1_26:690965350},
+    cake:   {q1_25:117810650,   q1_26:102717500},
+    monthly: {
+      toko:  [353151375, 291471800, 461525605],
+      snack: [188146650, 160943800, 341874900],
+      cake:  [38532500, 28185000, 36000000],
+    }
+  }
+},
+o2: {
+  color:'#1D5C8A', colorSoft:'#E2EEF5',
+  daily: [{"date":"04-01","rev":16741400.0,"target":18717465},{"date":"04-02","rev":21082250.0,"target":18717465},{"date":"04-03","rev":21370300.0,"target":18717465},{"date":"04-04","rev":21571650.0,"target":18717465},{"date":"04-05","rev":17073350.0,"target":18717465},{"date":"04-06","rev":16227425.0,"target":18717465},{"date":"04-07","rev":17938400.0,"target":18717465},{"date":"04-08","rev":19545800.0,"target":18717465},{"date":"04-09","rev":17488500.0,"target":18717465},{"date":"04-10","rev":20511500.0,"target":18717465},{"date":"04-11","rev":20827010.0,"target":18717465},{"date":"04-12","rev":14426550.0,"target":18717465},{"date":"04-16","rev":17380100.0,"target":18717465},{"date":"04-17","rev":21324500.0,"target":18717465},{"date":"04-18","rev":19292150.0,"target":18717465},{"date":"04-19","rev":23690600.0,"target":18717465},{"date":"04-20","rev":18022100.0,"target":18717465},{"date":"04-21","rev":20320600.0,"target":18717465},{"date":"04-22","rev":19459550.0,"target":18717465},{"date":"04-23","rev":19748500.0,"target":18717465},{"date":"04-24","rev":24052900.0,"target":18717465},{"date":"04-25","rev":20646350.0,"target":18717465},{"date":"04-26","rev":22903500.0,"target":18717465},{"date":"04-27","rev":17789500.0,"target":18717465},{"date":"04-28","rev":16717050.0,"target":18717465},{"date":"04-29","rev":17286250.0,"target":18717465},{"date":"04-30","rev":25588400.0,"target":18717465},{"date":"05-01","rev":26345400.0,"target":19706985},{"date":"05-02","rev":23166700.0,"target":19706985},{"date":"05-03","rev":21219850.0,"target":19706985},{"date":"05-04","rev":21463150.0,"target":19706985},{"date":"05-05","rev":18857850.0,"target":19706985},{"date":"05-06","rev":19464950.0,"target":19706985},{"date":"05-07","rev":18816900.0,"target":19706985},{"date":"05-08","rev":17388200.0,"target":19706985},{"date":"05-09","rev":25232125.0,"target":19706985},{"date":"05-10","rev":20871700.0,"target":19706985},{"date":"05-11","rev":22427100.0,"target":19706985},{"date":"05-12","rev":20914550.0,"target":19706985},{"date":"05-13","rev":23681750.0,"target":19706985},{"date":"05-14","rev":18027750.0,"target":19706985},{"date":"05-15","rev":18960400.0,"target":19706985},{"date":"05-16","rev":22588150.0,"target":19706985},{"date":"05-17","rev":20618750.0,"target":19706985},{"date":"05-18","rev":20407650.0,"target":19706985},{"date":"05-19","rev":19068050.0,"target":19706985},{"date":"05-20","rev":21726150.0,"target":19706985},{"date":"05-21","rev":18520800.0,"target":19706985},{"date":"05-22","rev":26242500.0,"target":19706985},{"date":"05-23","rev":25966800.0,"target":19706985},{"date":"05-24","rev":21307000.0,"target":19706985},{"date":"05-25","rev":22759400.0,"target":19706985},{"date":"05-26","rev":18892450.0,"target":19706985},{"date":"05-29","rev":25208000.0,"target":19706985},{"date":"05-30","rev":24816000.0,"target":19706985},{"date":"05-31","rev":26073550.0,"target":19706985}],
+  top_vol: [{"name":"DONAT MISES","prod":3482.0,"disc":22.0,"pct":0.63},{"name":"SISIR MENTEGA","prod":2023.0,"disc":0.0,"pct":0.0},{"name":"DONAT SALJU","prod":1419.0,"disc":4.0,"pct":0.28},{"name":"DONAT SATE","prod":1302.0,"disc":0.0,"pct":0.0},{"name":"STRAWBERRY","prod":1161.0,"disc":4.0,"pct":0.34},{"name":"SISIR MOCCA","prod":1119.0,"disc":1.0,"pct":0.09},{"name":"SISIR ORI","prod":1096.0,"disc":1.0,"pct":0.09},{"name":"NANAS","prod":1036.0,"disc":2.0,"pct":0.19}],
+  top_waste: [{"name":"ROTI TELUR KEJU","prod":144.0,"disc":19.0,"pct":13.19},{"name":"BLUEBERRY TOAST","prod":108.0,"disc":12.0,"pct":11.11},{"name":"CHNAMON SUGAR","prod":896.0,"disc":99.0,"pct":11.05},{"name":"KACANG HIJAU","prod":423.0,"disc":41.0,"pct":9.69},{"name":"WOLLROLL KEJU","prod":115.0,"disc":10.0,"pct":8.7},{"name":"SOBEK SISIR","prod":61.0,"disc":5.0,"pct":8.2},{"name":"PISANG KEPANG","prod":359.0,"disc":28.0,"pct":7.8},{"name":"TRIPLE CHEESE","prod":429.0,"disc":33.0,"pct":7.69}],
+  total_prod: 41741, total_disc: 875, n_products: 80,
+  monthly: [
+   {m:'Jan', a25:319043149, t26:478564723.5, a26:512258700, ach:1.07040631, gr:0.6056094657},
+   {m:'Feb', a25:324262149, t26:486393223.5, a26:471246150, ach:0.9688583788, gr:0.4532875683},
+   {m:'Mar', a25:399092450, t26:598638675, a26:623714275, ach:1.041887705, gr:0.5628315569},
+   {m:'Apr', a25:374349300, t26:561523950, a26:529026185, ach:0.9421257722, gr:0.4131886583},
+   {m:'May', a25:407277700, t26:610916550, a26:631033625, ach:1.032929334, gr:0.5493940007},
+  ],
+  cat: {
+    toko:   {q1_25:1042397748, q1_26:1607219125},
+    snack:  {q1_25:244700125,  q1_26:451180925},
+    cake:   {q1_25:25585500,   q1_26:28335500},
+    monthly: {
+      toko:  [512258700, 471246150, 623714275],
+      snack: [130504975, 125311450, 195364500],
+      cake:  [8890000, 10283000, 9162500],
+    }
+  }
+}
+};
+
+const CAT_COLORS = {toko:'#BA7517', snack:'#7A9E3E', cake:'#C0608A'};
+const CAT_LABELS = {toko:'Toko (Roti)', snack:'Snack Box', cake:'Cake (Pesanan)'};
+const gridC = 'rgba(58,42,29,0.07)';
+const tickC = '#7A6A5A';
+let charts = {};
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function rupiah(v){
+  if(Math.abs(v)>=1e9) return 'Rp '+(v/1e9).toFixed(2)+'M';
+  if(Math.abs(v)>=1e6) return 'Rp '+(v/1e6).toFixed(1)+'Jt';
+  return 'Rp '+Math.round(v).toLocaleString('id-ID');
+}
+
+function renderKPI(o){
+  const d = DATA[o];
+  const totalRev = d.daily.reduce((a,x)=>a+x.rev,0);
+  const totalTgt = d.daily.reduce((a,x)=>a+x.target,0);
+  const ach = (totalRev/totalTgt*100);
+  const avgGrowth = d.monthly.reduce((a,x)=>a+x.gr,0)/d.monthly.length*100;
+  const wastePct = (d.total_disc/d.total_prod*100);
+  const q1Total = d.cat.toko.q1_26 + d.cat.snack.q1_26 + d.cat.cake.q1_26;
+  const q1Total25 = d.cat.toko.q1_25 + d.cat.snack.q1_25 + d.cat.cake.q1_25;
+  const q1Growth = (q1Total-q1Total25)/q1Total25*100;
+  document.getElementById('kpiGrid').innerHTML = [
+    {lbl:'Revenue Toko Apr-Mei',val:rupiah(totalRev),sub:d.daily.length+' hari aktif',cls:'up'},
+    {lbl:'Pencapaian Target',val:ach.toFixed(1)+'%',sub:ach>=100?'Melebihi target':'Di bawah target',cls:ach>=100?'up':'warn'},
+    {lbl:'Growth Toko (avg YoY)',val:(avgGrowth>=0?'+':'')+avgGrowth.toFixed(1)+'%',sub:'rata-rata Jan-Mei',cls:'up'},
+    {lbl:'Revenue Total Q1 2026',val:rupiah(q1Total),sub:'Toko+Snackbox+Cake, '+(q1Growth>=0?'+':'')+q1Growth.toFixed(1)+'% YoY',cls:'up'},
+    {lbl:'Tingkat Diskon Roti',val:wastePct.toFixed(2)+'%',sub:d.total_disc.toLocaleString('id-ID')+' / '+d.total_prod.toLocaleString('id-ID')+' pcs',cls:wastePct>5?'down':'up'},
+  ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub ${k.cls}">${k.sub}</div></div>`).join('');
+}
+
+function renderTrend(o){
+  const d = DATA[o];
+  destroyChart('trend');
+  document.getElementById('legDotTrend').style.background = d.color;
+  charts.trend = new Chart(document.getElementById('trendChart'),{
+    type:'line',
+    data:{labels:d.daily.map(x=>x.date),datasets:[
+      {label:'Pendapatan',data:d.daily.map(x=>x.rev),borderColor:d.color,backgroundColor:d.color+'18',fill:true,tension:0.3,pointRadius:0,borderWidth:2},
+      {label:'Target',data:d.daily.map(x=>x.target),borderColor:'#9fc3df',borderDash:[5,4],fill:false,tension:0,pointRadius:0,borderWidth:1.5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>' '+rupiah(c.raw)}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:9},color:tickC,maxTicksLimit:14}},
+        y:{grid:{color:gridC},ticks:{font:{size:10},color:tickC,callback:v=>rupiah(v)}}}}
+  });
+}
+
+function renderWeekday(o){
+  const d = DATA[o];
+  destroyChart('weekday');
+  const sums = Array(7).fill(0), counts = Array(7).fill(0);
+  d.daily.forEach(x=>{
+    const dt = new Date(2026, parseInt(x.date.slice(0,2))-1, parseInt(x.date.slice(3,5)));
+    const wd = dt.getDay();
+    sums[wd]+=x.rev; counts[wd]++;
+  });
+  const labels=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const avgs = sums.map((s,i)=>counts[i]?s/counts[i]:0);
+  const order=[1,2,3,4,5,6,0];
+  charts.weekday = new Chart(document.getElementById('weekdayChart'),{
+    type:'bar',
+    data:{labels:order.map(i=>labels[i]),datasets:[{data:order.map(i=>avgs[i]),backgroundColor:order.map(i=>(i===0||i===6||i===5)?'#D9A441':d.color),borderWidth:0,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>' '+rupiah(c.raw)}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:11},color:tickC}},
+        y:{grid:{color:gridC},ticks:{font:{size:10},color:tickC,callback:v=>rupiah(v)}}}}
+  });
+  // extreme days
+  const sorted = d.daily.slice().sort((a,b)=>b.rev-a.rev);
+  const best = sorted[0], worst = sorted[sorted.length-1];
+  const sums2 = sums.map((s,i)=>counts[i]?s/counts[i]:0);
+  const bestDay = labels[sums2.indexOf(Math.max(...sums2))];
+  const worstDay = labels[sums2.indexOf(Math.min(...sums2))];
+  document.getElementById('extremeDays').innerHTML = `
+    <div><b style="color:var(--green);">Hari Terbaik (tunggal):</b> ${best.date}/2026 — ${rupiah(best.rev)}</div>
+    <div><b style="color:var(--red);">Hari Terlemah (tunggal):</b> ${worst.date}/2026 — ${rupiah(worst.rev)}</div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);"><b style="color:var(--green);">Rata-rata hari terbaik:</b> ${bestDay}</div>
+    <div><b style="color:var(--red);">Rata-rata hari terlemah:</b> ${worstDay}</div>
+  `;
+}
+
+function renderMonthly(o){
+  const d = DATA[o];
+  destroyChart('monthly');
+  charts.monthly = new Chart(document.getElementById('monthlyChart'),{
+    type:'bar',
+    data:{labels:d.monthly.map(x=>x.m),datasets:[
+      {label:'Aktual 2026',data:d.monthly.map(x=>x.a26),backgroundColor:d.color,borderRadius:4},
+      {label:'Target 2026',data:d.monthly.map(x=>x.t26),backgroundColor:'rgba(58,42,29,0.12)',borderRadius:4},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11},color:tickC,boxWidth:12}},tooltip:{callbacks:{label:(c)=>` ${c.dataset.label}: ${rupiah(c.raw)}`}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:11},color:tickC}},
+        y:{grid:{color:gridC},ticks:{font:{size:10},color:tickC,callback:v=>rupiah(v)}}}}
+  });
+  document.getElementById('monthlyTbl').innerHTML = d.monthly.map(x=>{
+    const achCls = x.ach>=1?'up':'down';
+    const grCls = x.gr>=0?'up':'down';
+    return `<tr><td>${x.m}</td><td>${rupiah(x.a25)}</td><td>${rupiah(x.t26)}</td><td>${rupiah(x.a26)}</td><td class="${achCls}">${(x.ach*100).toFixed(1)}%</td><td class="${grCls}">${x.gr>=0?'+':''}${(x.gr*100).toFixed(1)}%</td></tr>`;
+  }).join('');
+}
+
+function renderMix(o){
+  const d = DATA[o];
+  destroyChart('mix');
+  destroyChart('growthCat');
+  destroyChart('catMonthly');
+  const cats = ['toko','snack','cake'];
+  const q1_26 = cats.map(c=>d.cat[c].q1_26);
+  const total = q1_26.reduce((a,b)=>a+b,0);
+  charts.mix = new Chart(document.getElementById('mixChart'),{
+    type:'doughnut',
+    data:{labels:cats.map(c=>CAT_LABELS[c]),datasets:[{data:q1_26,backgroundColor:cats.map(c=>CAT_COLORS[c]),borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>` ${c.label}: ${rupiah(c.raw)} (${(c.raw/total*100).toFixed(1)}%)`}}}}
+  });
+  document.getElementById('mixLegend').innerHTML = cats.map(c=>`<span><span class="dot" style="background:${CAT_COLORS[c]};"></span>${CAT_LABELS[c]}: ${(d.cat[c].q1_26/total*100).toFixed(1)}%</span>`).join('');
+
+  const growths = cats.map(c=>(d.cat[c].q1_26-d.cat[c].q1_25)/d.cat[c].q1_25*100);
+  charts.growthCat = new Chart(document.getElementById('growthCatChart'),{
+    type:'bar',
+    data:{labels:cats.map(c=>CAT_LABELS[c]),datasets:[{data:growths,backgroundColor:cats.map(c=>CAT_COLORS[c]),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>` ${c.raw>=0?'+':''}${c.raw.toFixed(1)}% YoY`}}},
+      scales:{x:{grid:{color:gridC},ticks:{font:{size:10},color:tickC,callback:v=>v+'%'}},
+        y:{grid:{display:false},ticks:{font:{size:12},color:tickC}}}}
+  });
+
+  charts.catMonthly = new Chart(document.getElementById('catMonthlyChart'),{
+    type:'bar',
+    data:{labels:['Januari','Februari','Maret'],datasets:cats.map(c=>({
+      label:CAT_LABELS[c],data:d.cat.monthly[c],backgroundColor:CAT_COLORS[c],borderRadius:4,stack:'s'
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11},color:tickC,boxWidth:12}},tooltip:{callbacks:{label:(c)=>` ${c.dataset.label}: ${rupiah(c.raw)}`}}},
+      scales:{x:{grid:{display:false},stacked:true,ticks:{font:{size:11},color:tickC}},
+        y:{grid:{color:gridC},stacked:true,ticks:{font:{size:10},color:tickC,callback:v=>rupiah(v)}}}}
+  });
+}
+
+function renderProduk(o){
+  const d = DATA[o];
+  const maxVol = d.top_vol[0].prod;
+  document.getElementById('topVol').innerHTML = d.top_vol.map((p,i)=>{
+    const c = p.pct>5?'#BA7517':d.color;
+    return `<div class="prod-row"><span class="prod-name">${i+1}. ${p.name}</span><div class="prod-bar-bg"><div class="prod-bar" style="width:${(p.prod/maxVol*100).toFixed(0)}%;background:${c};"></div></div><span class="prod-val">${p.prod.toLocaleString('id-ID')}</span><span class="prod-sub">${p.pct}% diskon</span></div>`;
+  }).join('');
+  const maxWaste = d.top_waste[0].pct;
+  document.getElementById('topWaste').innerHTML = d.top_waste.map((p,i)=>{
+    const c = p.pct>=15?'#A32D2D':p.pct>=10?'#D9A441':'#BA7517';
+    return `<div class="prod-row"><span class="prod-name">${i+1}. ${p.name}</span><div class="prod-bar-bg"><div class="prod-bar" style="width:${(p.pct/maxWaste*100).toFixed(0)}%;background:${c};"></div></div><span class="prod-val" style="color:${c};">${p.pct}%</span><span class="prod-sub">${p.disc}/${p.prod} pcs</span></div>`;
+  }).join('');
+  const totalPct = (d.total_disc/d.total_prod*100).toFixed(2);
+  document.getElementById('discSummary').innerHTML = `
+    <div style="margin-bottom:8px;"><b>Total Produksi (Apr+Mei):</b> ${d.total_prod.toLocaleString('id-ID')} pcs</div>
+    <div style="margin-bottom:8px;"><b>Total Diskon/Sisa:</b> ${d.total_disc.toLocaleString('id-ID')} pcs</div>
+    <div style="margin-bottom:8px;"><b>Rata-rata Tingkat Diskon:</b> ${totalPct}%</div>
+    <div style="margin-bottom:8px;"><b>Jumlah Jenis Produk:</b> ${d.n_products} jenis</div>
+    <div style="padding-top:8px;border-top:1px solid var(--line);color:var(--ink-soft);">${o==='o1'?'Outlet 1 memiliki tingkat diskon ~3x lebih tinggi dibanding Outlet 2 — perlu evaluasi jadwal produksi untuk produk roll dan sobek.':'Outlet 2 sangat efisien dengan tingkat diskon terendah di antara kedua toko, meski volume produksi 60% lebih besar dari Outlet 1.'}</div>
+  `;
+}
+
+function renderInsights(o){
+  const d = DATA[o];
+  const totalRev = d.daily.reduce((a,x)=>a+x.rev,0);
+  const totalTgt = d.daily.reduce((a,x)=>a+x.target,0);
+  const ach = (totalRev/totalTgt*100);
+  const aboveTarget = d.daily.filter(x=>x.rev>=x.target).length;
+  let insights, plan;
+  if(o==='o1'){
+    insights = [
+      {cls:'r',title:'Tingkat Diskon Tinggi: 6,69%',text:'Outlet 1 membuang 1.751 dari 26.190 pcs roti (Apr-Mei) — 3x lebih tinggi dari Outlet 2 (2,1%). SOBEK KOMBINASI (32,8%), BLUEBERRY TOAST (25%), dan SOBEK COKLAT KEJU (23,4%) paling parah.'},
+      {cls:'g',title:'Target Toko Tercapai Tipis (102%)',text:`Total Apr-Mei mencapai ${ach.toFixed(1)}% dari target (Rp 723,4 Jt dari Rp 709,2 Jt). Namun hanya ${aboveTarget} dari ${d.daily.length} hari (${(aboveTarget/d.daily.length*100).toFixed(0)}%) yang individual mencapai target hariannya.`},
+      {cls:'y',title:'Februari Bulan Terlemah',text:'Februari hanya 83,5% dari target dengan growth YoY terendah (+4,4%), jauh di bawah Maret yang melonjak +34,6%.'},
+      {cls:'g',title:'Snack Box Tumbuh Eksplosif: +85,6%',text:'Revenue Snack Box Q1 2026 (Rp 691,0 Jt) tumbuh 85,6% YoY — pertumbuhan tercepat dari semua kategori, kini menyumbang 36,4% dari total revenue Q1.'},
+      {cls:'r',title:'Cake Menurun -12,8%',text:'Pesanan Cake Q1 2026 (Rp 102,7 Jt) turun dari Rp 117,8 Jt tahun lalu — satu-satunya kategori yang menyusut di Outlet 1.'},
+      {cls:'b',title:'Produk Andalan: Donat Mises & Sisir',text:'Donat Mises (1.416 pcs), Sisir Mentega (1.210), Tawar Ori (1.157), dan Sisir Ori (1.121) — kontributor volume terbesar, fokus promosi di sini.'},
+      {cls:'y',title:'Akhir Pekan Jadi Andalan',text:'Sabtu (Rp 14,2 Jt/hari) & Minggu (Rp 13,8 Jt) konsisten tertinggi. Senin & Selasa terendah (~Rp 11,5-11,8 Jt).'},
+    ];
+    plan = `
+      <h3>Rencana Aksi — Outlet 1</h3>
+      <ol>
+        <li><b>Turunkan diskon roti dari 6,69% ke &lt;3%:</b> kurangi batch produksi SOBEK KOMBINASI, BLUEBERRY TOAST, SOBEK COKLAT KEJU, dan TAWAR KEJU sebesar 30-40%, atau jadikan produk pre-order saja.</li>
+        <li><b>Selamatkan kategori Cake:</b> lakukan riset rasa/desain baru dan kampanye promosi pesanan cake untuk membalik tren -12,8% menjadi positif, mengikuti momentum Snack Box.</li>
+        <li><b>Replikasi momentum Snack Box:</b> alokasikan lebih banyak SDM & bahan baku ke lini Snack Box yang tumbuh 85,6% — pertimbangkan menambah varian paket korporat/kantor.</li>
+        <li><b>Promosi hari kerja (Senin-Selasa):</b> buat paket diskon "Awal Pekan" atau bundling kopi+roti untuk mendekatkan gap dengan performa weekend.</li>
+        <li><b>Perbaiki performa Februari:</b> evaluasi kalender promosi & stok bahan baku di bulan-bulan pendek (28 hari) agar pencapaian target tidak jatuh seperti Februari (83,5%).</li>
+        <li><b>Maksimalkan produk andalan:</b> buat bundling "Paket Pagi" berisi Donat Mises + Sisir Mentega + kopi untuk meningkatkan AOV dari produk yang sudah laris.</li>
+      </ol>`;
+  } else {
+    insights = [
+      {cls:'g',title:'Pertumbuhan Sangat Kuat: +54,9% YoY (Toko)',text:'Growth YoY rata-rata Outlet 2 mencapai +54,9% (Toko), tertinggi Januari (+60,6%) dan Maret (+56,3%) — jauh melampaui Outlet 1 (+15,9%).'},
+      {cls:'g',title:'Revenue Total Q1 Tumbuh +59,0%',text:'Total revenue (Toko+Snackbox+Cake) Q1 2026 mencapai Rp 2.086,7 Jt, naik dari Rp 1.312,7 Jt tahun lalu — pertumbuhan tertinggi dari kedua outlet.'},
+      {cls:'g',title:'Diskon Sangat Efisien: 2,1%',text:'Hanya 875 dari 41.741 pcs (Apr-Mei) jadi diskon. SISIR MENTEGA dan DONAT SATE bahkan 0% diskon meski volume tinggi (2.023 & 1.302 pcs).'},
+      {cls:'y',title:'CHNAMON SUGAR Tetap Bermasalah',text:'CHNAMON SUGAR diskon 11,05% (99 dari 896 pcs) — satu-satunya produk volume tinggi dengan waste signifikan. KACANG HIJAU juga 9,69%.'},
+      {cls:'b',title:'Donat Mises Mendominasi',text:'Donat Mises (3.482 pcs) adalah produk #1 dengan diskon hanya 0,63% — volume hampir 2,5x lipat dari produk terbesar kedua (Sisir Mentega 2.023 pcs).'},
+      {cls:'g',title:'Snack Box & Cake Tumbuh Positif',text:'Snack Box Q1 +84,4% YoY (Rp 451,2 Jt), Cake +10,7% YoY (Rp 28,3 Jt) — semua kategori tumbuh, tidak ada yang menyusut.'},
+      {cls:'y',title:'April Sedikit di Bawah Target',text:'April hanya 94,2% dari target (Rp 529 Jt dari Rp 561,5 Jt) — satu-satunya bulan Toko yang belum tercapai dalam periode Jan-Mei.'},
+    ];
+    plan = `
+      <h3>Rencana Aksi — Outlet 2</h3>
+      <ol>
+        <li><b>Jadikan Outlet 2 benchmark operasional:</b> dokumentasikan SOP produksi & jadwal Outlet 2 (diskon hanya 2,1%) untuk diterapkan ke Outlet 1.</li>
+        <li><b>Tuntaskan CHNAMON SUGAR & KACANG HIJAU:</b> ini satu-satunya celah efisiensi — uji ukuran batch lebih kecil atau jadikan produk pre-order/musiman.</li>
+        <li><b>Investigasi April yang di bawah target:</b> cek apakah ada faktor musiman (cuaca, libur, kompetitor) yang menyebabkan April lebih lemah dibanding Maret & Mei.</li>
+        <li><b>Maksimalkan Donat Mises:</b> dengan volume 3.482 pcs & diskon 0,63%, pertimbangkan menambah kapasitas produksi atau membuat varian baru berbasis Donat Mises.</li>
+        <li><b>Pertahankan momentum Snack Box & Cake:</b> kedua kategori tumbuh positif — perluas jangkauan pemasaran B2B (kantor, acara) untuk mempertahankan tren.</li>
+        <li><b>Transfer praktik terbaik ke Outlet 1:</b> selisih revenue total Q1 (Rp 2.086,7 Jt vs Rp 1.899,8 Jt) dan tingkat diskon menunjukkan ruang besar bagi Outlet 1 untuk belajar dari Outlet 2.</li>
+      </ol>`;
+  }
+  document.getElementById('insightGrid').innerHTML = insights.map(x=>`
+    <div class="ins ${x.cls}"><div class="ins-t">${x.title}</div><div class="ins-x">${x.text}</div></div>`).join('');
+  document.getElementById('planBox').innerHTML = plan;
+}
+
+function activateOutlet(o){
+  document.querySelectorAll('.otab').forEach(t=>t.classList.toggle('on', t.dataset.o===o));
+  renderKPI(o);
+  renderTrend(o);
+  renderWeekday(o);
+  renderMonthly(o);
+  renderMix(o);
+  renderProduk(o);
+  renderInsights(o);
+}
+
+function activateTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===id));
+}
+
+document.getElementById('outletTabs').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-o]');
+  if(btn) activateOutlet(btn.dataset.o);
+});
+document.getElementById('tabBar').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-t]');
+  if(btn) activateTab(btn.dataset.t);
+});
+
+activateOutlet('o1');
+</script>
+</body>
+</html>
