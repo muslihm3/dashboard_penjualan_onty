@@ -172,7 +172,7 @@ footer{margin-top:36px;padding-top:14px;border-top:1px solid #E8DECE;font-size:1
     <div style="position:relative;height:200px"><canvas id="cakeChart"></canvas></div></div>
 </div>
 <div id="produk" class="panel">
-<div class="card" style="border-left:4px solid #1D5C8A;background:linear-gradient(135deg,#E2EEF5 0%,#fff 100%);margin-bottom:14px">
+<div id="julSummaryCard" class="card" style="border-left:4px solid #1D5C8A;background:linear-gradient(135deg,#E2EEF5 0%,#fff 100%);margin-bottom:14px">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
     <div>
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#7A6A5A;font-weight:700;margin-bottom:4px">&#128202; TOTAL PENJUALAN JULI 2026 &#183; LAPORAN PERGERAKAN BARANG &amp; JASA</div>
@@ -413,6 +413,10 @@ function renderFastTab(o){
   var sv=document.getElementById('subVol');if(sv)sv.textContent='Fast Moving '+lbl+note;
   var sr=document.getElementById('subRev');if(sr)sr.textContent='Revenue Produk '+lbl+note;
   var ss=document.getElementById('subSnk');if(ss)ss.textContent='Item Snack Box Terlaris '+lbl;
+  // Show/hide July summary card
+  var jsc=document.getElementById('julSummaryCard');
+  if(jsc) jsc.style.display=(!FILTER||FILTER==='all'||FILTER==='2026-07')?'':'none';
+
   if(f.noData){var msg='<p style="color:#7A6A5A;font-size:12px;padding:8px 0">Tidak ada data untuk periode ini</p>';['O1','O2'].forEach(function(s){['vol','rev','snk'].forEach(function(k){var el=document.getElementById(k+s);if(el)el.innerHTML=msg;});});return;}
   var ve=document.getElementById('vol'+o.toUpperCase());if(ve)ve.innerHTML=mkTbl(f.vols,'vol',function(p){return p.vol.toLocaleString('id-ID')+' pcs';},f.showGrowth);
   var re2=document.getElementById('rev'+o.toUpperCase());if(re2)re2.innerHTML=mkTbl(f.revs,'rev',function(p){return rp2(p.rev);},f.showGrowth);
