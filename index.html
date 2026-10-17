@@ -415,9 +415,12 @@ function renderFastTab(o){
   var re2=document.getElementById('rev'+su);if(re2)re2.innerHTML=mkTbl(f.revs,'vol',function(p){return rp2(p.vol);},f.showGrowth);
   var se=document.getElementById('snk'+su);if(se)se.innerHTML=mkTbl(f.snks,'vol',function(p){return p.vol.toLocaleString('id-ID')+' pcs';},f.showGrowth);
 }
-function renderVolProd(o){
+var VP_SORT={o1:'pct',o2:'pct',g:'pct'};
+function renderVolProd(o,sortKey){
   var color=o==='o1'?'#BA7517':o==='o2'?'#1D5C8A':'#BA7517';
   var su=o.toUpperCase();
+  if(sortKey)VP_SORT[o]=sortKey;
+  var sk=VP_SORT[o]||'pct';
   var db=DBM[o];
   if(!db){var ve2=document.getElementById('volprod'+su);if(ve2)ve2.innerHTML='<p style="color:#7A6A5A;font-size:12px;padding:8px 0">Tidak ada data diskon</p>';return;}
   var all=Object.keys(db).sort(),yms;
@@ -429,28 +432,40 @@ function renderVolProd(o){
   if(yms.length===0)yms=all;
   var comb={};
   yms.forEach(function(ym){if(!db[ym])return;db[ym].forEach(function(p){if(!comb[p.name])comb[p.name]={name:p.name,prod:0,disc:0};comb[p.name].prod+=p.prod;comb[p.name].disc+=p.disc;});});
-  // Compute MoM growth: compare vs previous period
   var showG=yms.length===1;
   var prevMap={};
   if(showG){
     var curIdx=all.indexOf(yms[0]);
     if(curIdx>0){var prevYm=all[curIdx-1];if(db[prevYm])db[prevYm].forEach(function(p){prevMap[p.name]=p.prod;});}
   }
-  var prods=Object.values(comb).sort(function(a,b){return b.prod-a.prod;}).slice(0,8).map(function(p){
+  var allProds=Object.values(comb).map(function(p){
     var g=null;
     if(showG&&prevMap[p.name]&&prevMap[p.name]>0)g=Math.round((p.prod-prevMap[p.name])/prevMap[p.name]*1000)/10;
     return{name:p.name,prod:p.prod,disc:p.disc,pct:p.prod>0?Math.round(p.disc/p.prod*1000)/10:0,growth:g};
   });
+  var prods=allProds.slice().sort(function(a,b){return sk==='disc'?b.disc-a.disc:sk==='pct'?b.pct-a.pct:b.prod-a.prod;}).slice(0,8);
+  var grandProd=allProds.reduce(function(a,p){return a+p.prod;},0),grandDisc=allProds.reduce(function(a,p){return a+p.disc;},0);
   var ve=document.getElementById('volprod'+su);
   if(!ve)return;
+  // Sort toggle buttons
+  var btnS='<div style="display:flex;gap:6px;margin-bottom:8px">'
+    +'<span style="font-size:11px;color:#7A6A5A;align-self:center">Urut:</span>'
+    +'<button onclick="renderVolProd(\''+o+'\',\'pct\')" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid '+(sk==='pct'?color:'#C8B89A')+';background:'+(sk==='pct'?color:'transparent')+';color:'+(sk==='pct'?'#fff':'#5A4A3A')+';cursor:pointer;font-weight:'+(sk==='pct'?'700':'400')+'">% Presentase</button>'
+    +'<button onclick="renderVolProd(\''+o+'\',\'disc\')" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid '+(sk==='disc'?color:'#C8B89A')+';background:'+(sk==='disc'?color:'transparent')+';color:'+(sk==='disc'?'#fff':'#5A4A3A')+';cursor:pointer;font-weight:'+(sk==='disc'?'700':'400')+'">Total Diskon</button>'
+    +'<button onclick="renderVolProd(\''+o+'\',\'prod\')" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid '+(sk==='prod'?color:'#C8B89A')+';background:'+(sk==='prod'?color:'transparent')+';color:'+(sk==='prod'?'#fff':'#5A4A3A')+';cursor:pointer;font-weight:'+(sk==='prod'?'700':'400')+'">Total Produksi</button>'
+    +'</div>';
   if(!showG){
-    ve.innerHTML=renderDiskonBar(prods,'prod',color,function(p){return Math.round(p.prod).toLocaleString('id-ID')+' pcs';},function(p){return p.pct+'% disc';});
+    ve.innerHTML=btnS+renderDiskonBar(prods,sk==='disc'?'disc':'prod',color,
+      sk==='disc'?function(p){return Math.round(p.disc).toLocaleString('id-ID')+' pcs disc';}:function(p){return Math.round(p.prod).toLocaleString('id-ID')+' pcs';},
+      sk==='pct'?function(p){return p.pct+'%';}:function(p){return Math.round(p.disc).toLocaleString('id-ID')+' disc · '+p.pct+'%';});
     return;
   }
-  // Single month: show table with Growth MoM
-  var mx=prods[0]?prods[0].prod||1:1;
-  var h='<table style="font-size:12px;width:100%"><thead><tr style="border-bottom:2px solid #3A2A1D"><th style="width:24px;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">#</th><th style="text-align:left;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Produk</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Produksi</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">% Disc</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Growth MoM</th></tr></thead><tbody>';
-  prods.forEach(function(p,i){var clr=p.pct>=20?'#A32D2D':p.pct>=10?'#D85A30':color;var gc=p.growth==null?'<td style="color:#7A6A5A;text-align:center">—</td>':('<td style="color:'+(p.growth>0?'#3B6D11':p.growth<0?'#A32D2D':'#7A6A5A')+';font-weight:700;text-align:right;padding:6px 4px">'+(p.growth>0?'+':'')+p.growth+'%</td>');h+='<tr style="border-bottom:1px solid #E8DECE"><td style="color:#7A6A5A;font-size:11px;padding:6px 4px">'+(i+1)+'</td><td style="font-weight:600;padding:6px 4px">'+p.name+'</td><td style="text-align:right;padding:6px 4px">'+Math.round(p.prod).toLocaleString('id-ID')+' pcs</td><td style="text-align:right;padding:6px 4px;color:'+clr+';font-weight:700">'+p.pct+'%</td>'+gc+'</tr>';});
+  // Single month: show table
+  var h=btnS+'<table style="font-size:12px;width:100%"><thead><tr style="border-bottom:2px solid #3A2A1D"><th style="width:24px;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">#</th><th style="text-align:left;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Produk</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Total Produksi</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Total Diskon</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Presentase</th><th style="text-align:right;color:#7A6A5A;font-size:10px;text-transform:uppercase;padding:6px 4px">Growth MoM</th></tr></thead><tbody>';
+  var tProd=0,tDisc=0;
+  prods.forEach(function(p,i){var clr=p.pct>=20?'#A32D2D':p.pct>=10?'#D85A30':color;var gc=p.growth==null?'<td style="color:#7A6A5A;text-align:center;padding:6px 4px">—</td>':('<td style="color:'+(p.growth>0?'#3B6D11':p.growth<0?'#A32D2D':'#7A6A5A')+';font-weight:700;text-align:right;padding:6px 4px">'+(p.growth>0?'+':'')+p.growth+'%</td>');tProd+=p.prod;tDisc+=p.disc;h+='<tr style="border-bottom:1px solid #E8DECE"><td style="color:#7A6A5A;font-size:11px;padding:6px 4px">'+(i+1)+'</td><td style="font-weight:600;padding:6px 4px">'+p.name+'</td><td style="text-align:right;padding:6px 4px">'+Math.round(p.prod).toLocaleString('id-ID')+' pcs</td><td style="text-align:right;padding:6px 4px;font-weight:700">'+Math.round(p.disc).toLocaleString('id-ID')+' pcs</td><td style="text-align:right;padding:6px 4px;color:'+clr+';font-weight:700">'+p.pct+'%</td>'+gc+'</tr>';});
+  var grandPct=grandProd>0?Math.round(grandDisc/grandProd*1000)/10:0;
+  h+='<tr style="border-top:2px solid #3A2A1D;background:#F8F3EE"><td colspan="2" style="font-weight:700;padding:6px 4px;font-size:11px">TOTAL (semua produk)</td><td style="text-align:right;padding:6px 4px;font-weight:700">'+Math.round(grandProd).toLocaleString('id-ID')+' pcs</td><td style="text-align:right;padding:6px 4px;font-weight:700">'+Math.round(grandDisc).toLocaleString('id-ID')+' pcs</td><td style="text-align:right;padding:6px 4px;font-weight:700;color:'+(grandPct>=10?'#A32D2D':'#3B6D11')+'">'+grandPct+'%</td><td></td></tr>';
   ve.innerHTML=h+'</tbody></table>';
 }
 function renderTargetPlan(o){
